@@ -1,25 +1,27 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+public extension Collection {
+    func shuffled() -> [Iterator.Element] {
+        var array = Array(self)
+        array.shuffle()
+        return array
+    }
+}
 
-#if os(Linux)
-import Glibc
-#else
-import Darwin.C
-#endif
-
-public extension MutableCollection where Index == Int {
+public extension MutableCollection {
     mutating func shuffle() {
-        if count <= 1 { return }
-
-        for i in 0..<count - 1 {
-          #if os(Linux)
-            let j = Int(random() % (count - i)) + i
-          #else
-            let j = Int(arc4random_uniform(UInt32(count - i))) + i
-          #endif
+        var i = startIndex
+        var n = count
+        
+        while n > 1 {
+            let j = index(i, offsetBy: random(n))
             swapAt(i, j)
+            formIndex(after: &i)
+            n -= 1
         }
     }
 }
+
+
 
